@@ -11,7 +11,8 @@
         { 
           id: Date.now(), 
           text: newTodoText, 
-          completed: false 
+          completed: false,
+          created: new Date().toLocaleString()
         }
       ]);
       newTodoText = '';
