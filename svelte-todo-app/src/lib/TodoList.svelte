@@ -1,9 +1,7 @@
 <script>
-  import { writable } from 'svelte/store';
+  import { todos } from './stores.js';
   import TodoItem from './TodoItem.svelte';
 
-  // Create a writable store for todos
-  let todos = writable([]);
   let newTodoText = '';
 
   function addTodo() {
