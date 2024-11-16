@@ -9,6 +9,7 @@ A simple and elegant todo application built with Svelte and Vite.
 - Add new todos
 - Mark todos as complete
 - Delete todos
+- Local storage persistance
 - Responsive design
 
 ## Getting Started
