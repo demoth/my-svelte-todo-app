@@ -2,8 +2,10 @@
   import TodoList from './lib/TodoList.svelte';
   import { todos } from './lib/stores.js';
   
-  // Calculate total items
+  // Calculate statistics
   $: totalItems = $todos.length;
+  $: completedItems = $todos.filter(todo => todo.completed).length;
+  $: pendingItems = totalItems - completedItems;
 </script>
 
 <main>
@@ -12,7 +14,20 @@
 </main>
 
 <footer>
-  <p>Total items in list: {totalItems}</p>
+  <div class="stats">
+    <div class="stat-item">
+      <span class="stat-label">Total:</span>
+      <span class="stat-value">{totalItems}</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Completed:</span>
+      <span class="stat-value completed">{completedItems}</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Pending:</span>
+      <span class="stat-value pending">{pendingItems}</span>
+    </div>
+  </div>
 </footer>
 
 <style>
@@ -37,8 +52,27 @@
     border-top: 1px solid #ddd;
     font-family: Arial, sans-serif;
   }
-  footer p {
-    margin: 0;
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  .stat-item {
+    display: flex;
+    gap: 5px;
+  }
+  .stat-label {
     color: #666;
+    font-weight: 500;
+  }
+  .stat-value {
+    font-weight: bold;
+    min-width: 24px;
+  }
+  .stat-value.completed {
+    color: #4CAF50;
+  }
+  .stat-value.pending {
+    color: #f44336;
   }
 </style>
