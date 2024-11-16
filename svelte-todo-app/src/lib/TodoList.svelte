@@ -12,7 +12,8 @@
           id: Date.now(), 
           text: newTodoText, 
           completed: false,
-          created: new Date().toLocaleString()
+          created: new Date().toLocaleString(),
+          completedAt: null
         }
       ]);
       newTodoText = '';
@@ -28,7 +29,13 @@
   function toggleTodo(id) {
     todos.update(currentTodos => 
       currentTodos.map(todo => 
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+        todo.id === id 
+          ? { 
+              ...todo, 
+              completed: !todo.completed,
+              completedAt: !todo.completed ? new Date().toLocaleString() : null
+            } 
+          : todo
       )
     );
   }

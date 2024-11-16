@@ -11,8 +11,15 @@
       checked={todo.completed} 
       on:change={onToggle}
     />
-    <span class="todo-text">{todo.text}</span>
-    <span class="timestamp">Created: {todo.created}</span>
+    <div class="text-content">
+      <span class="todo-text">{todo.text}</span>
+      <div class="timestamps">
+        <span class="timestamp">Created: {todo.created}</span>
+        {#if todo.completedAt}
+          <span class="timestamp completed">Completed: {todo.completedAt}</span>
+        {/if}
+      </div>
+    </div>
   </div>
   <button on:click={onDelete}>Delete</button>
 </div>
@@ -31,8 +38,15 @@
 
   .todo-content {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
+    flex-grow: 1;
+  }
+
+  .text-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
     flex-grow: 1;
   }
 
@@ -43,16 +57,27 @@
 
   input[type="checkbox"] {
     margin-right: 10px;
+    margin-top: 4px;
   }
 
   .todo-text {
     flex-grow: 1;
   }
 
+  .timestamps {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
   .timestamp {
     font-size: 0.8em;
     color: #666;
     white-space: nowrap;
+  }
+
+  .timestamp.completed {
+    color: #4CAF50;
   }
 
   button {
@@ -63,6 +88,7 @@
     border-radius: 4px;
     cursor: pointer;
     margin-left: 10px;
+    align-self: center;
   }
 
   button:hover {
