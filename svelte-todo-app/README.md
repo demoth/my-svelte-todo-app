@@ -2,6 +2,8 @@
 
 A simple and elegant todo application built with Svelte and Vite.
 
+![screenshot](screenshot.png)
+
 ## Features
 
 - Add new todos
