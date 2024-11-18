@@ -1,44 +1,29 @@
 <script>
   import { todos } from './stores.js';
   import TodoItem from './TodoItem.svelte';
+  import { onMount } from 'svelte';
 
   let newTodoText = '';
 
   function addTodo() {
     if (newTodoText.trim()) {
-      todos.update(currentTodos => [
-        ...currentTodos, 
-        { 
-          id: Date.now(), 
-          text: newTodoText, 
-          completed: false,
-          created: new Date().toLocaleString(),
-          completedAt: null
-        }
-      ]);
+      todos.add(newTodoText);
       newTodoText = '';
     }
   }
 
   function deleteTodo(id) {
-    todos.update(currentTodos => 
-      currentTodos.filter(todo => todo.id !== id)
-    );
+    todos.delete(id);
   }
 
   function toggleTodo(id) {
-    todos.update(currentTodos => 
-      currentTodos.map(todo => 
-        todo.id === id 
-          ? { 
-              ...todo, 
-              completed: !todo.completed,
-              completedAt: !todo.completed ? new Date().toLocaleString() : null
-            } 
-          : todo
-      )
-    );
+    todos.toggle(id);
   }
+
+  // Load todos when component mounts
+  onMount(() => {
+    todos.load();
+  });
 </script>
 
 <div class="todo-list">
