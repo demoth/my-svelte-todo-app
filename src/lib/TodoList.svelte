@@ -38,13 +38,23 @@
   <div class="todos">
     {#each $todos as todo (todo.id)}
       <div class="todo-item">
-        <input
-          type="checkbox"
-          checked={todo.completed}
-          on:change={() => toggleTodo(todo.id)}
-        />
-        <span class:completed={todo.completed}>{todo.title}</span>
-        <button on:click={() => deleteTodo(todo.id)}>Delete</button>
+        <div class="todo-content">
+          <div class="todo-header">
+            <input
+              type="checkbox"
+              checked={todo.completed}
+              on:change={() => toggleTodo(todo.id)}
+            />
+            <span class:completed={todo.completed}>{todo.title}</span>
+            <button on:click={() => deleteTodo(todo.id)}>Delete</button>
+          </div>
+          <div class="todo-dates">
+            <span class="date-info">Created: {new Date(todo.created_at).toLocaleString()}</span>
+            {#if todo.completed}
+              <span class="date-info">Completed: {new Date(todo.updated_at).toLocaleString()}</span>
+            {/if}
+          </div>
+        </div>
       </div>
     {/each}
   </div>
@@ -52,16 +62,39 @@
 
 <style>
   .todo-list {
-    max-width: 500px;
+    max-width: 600px;
     margin: 0 auto;
   }
 
   .todo-item {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    flex-direction: column;
     padding: 10px;
     border-bottom: 1px solid #eee;
+  }
+
+  .todo-content {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .todo-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .todo-dates {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.8em;
+    color: #666;
+    margin-left: 30px;
+  }
+
+  .date-info {
+    margin-right: 15px;
   }
 
   .completed {
@@ -95,12 +128,12 @@
     background-color: #45a049;
   }
 
-  .todo-item button {
+  .todo-header button {
     margin-left: auto;
     background-color: #f44336;
   }
 
-  .todo-item button:hover {
+  .todo-header button:hover {
     background-color: #da190b;
   }
 </style>
