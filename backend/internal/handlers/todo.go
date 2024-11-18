@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"sort"
 	"time"
 	"todo-app/internal/models"
 
@@ -15,10 +16,21 @@ import (
 var todos = make(map[string]models.Todo)
 
 func GetTodos(w http.ResponseWriter, r *http.Request) {
+	// Convert map to slice for sorting
 	todoList := make([]models.Todo, 0, len(todos))
 	for _, todo := range todos {
 		todoList = append(todoList, todo)
 	}
+
+	// Sort todos: non-completed first, then by creation date
+	sort.Slice(todoList, func(i, j int) bool {
+		// If completion status is different, non-completed comes first
+		if todoList[i].Completed != todoList[j].Completed {
+			return !todoList[i].Completed
+		}
+		// If completion status is the same, sort by creation date (older first)
+		return todoList[i].CreatedAt.Before(todoList[j].CreatedAt)
+	})
 
 	log.Printf("GetTodos: Returning %d todos: %+v\n", len(todoList), todoList)
 	w.Header().Set("Content-Type", "application/json")
