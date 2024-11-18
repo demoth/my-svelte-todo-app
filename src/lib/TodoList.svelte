@@ -1,6 +1,5 @@
 <script>
   import { todos } from './stores.js';
-  import TodoItem from './TodoItem.svelte';
   import { onMount } from 'svelte';
 
   let newTodoText = '';
@@ -36,37 +35,55 @@
     <button type="submit">Add Todo</button>
   </form>
 
-  {#each $todos as todo (todo.id)}
-    <TodoItem 
-      todo={todo} 
-      onDelete={() => deleteTodo(todo.id)}
-      onToggle={() => toggleTodo(todo.id)}
-    />
-  {/each}
+  <div class="todos">
+    {#each $todos as todo (todo.id)}
+      <div class="todo-item">
+        <input
+          type="checkbox"
+          checked={todo.completed}
+          on:change={() => toggleTodo(todo.id)}
+        />
+        <span class:completed={todo.completed}>{todo.title}</span>
+        <button on:click={() => deleteTodo(todo.id)}>Delete</button>
+      </div>
+    {/each}
+  </div>
 </div>
 
 <style>
   .todo-list {
-    background-color: #f4f4f4;
-    border-radius: 8px;
-    padding: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .todo-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .completed {
+    text-decoration: line-through;
+    color: #888;
   }
 
   form {
     display: flex;
+    gap: 10px;
     margin-bottom: 20px;
   }
 
-  input {
-    flex-grow: 1;
-    padding: 10px;
-    margin-right: 10px;
+  input[type="text"] {
+    flex: 1;
+    padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
   }
 
   button {
-    padding: 10px 15px;
+    padding: 8px 16px;
     background-color: #4CAF50;
     color: white;
     border: none;
@@ -76,5 +93,14 @@
 
   button:hover {
     background-color: #45a049;
+  }
+
+  .todo-item button {
+    margin-left: auto;
+    background-color: #f44336;
+  }
+
+  .todo-item button:hover {
+    background-color: #da190b;
   }
 </style>

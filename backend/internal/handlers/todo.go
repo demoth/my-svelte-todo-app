@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 	"todo-app/internal/models"
@@ -18,7 +19,8 @@ func GetTodos(w http.ResponseWriter, r *http.Request) {
 	for _, todo := range todos {
 		todoList = append(todoList, todo)
 	}
-	
+
+	log.Printf("GetTodos: Returning %d todos: %+v\n", len(todoList), todoList)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(todoList)
 }
@@ -26,14 +28,14 @@ func GetTodos(w http.ResponseWriter, r *http.Request) {
 func GetTodo(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	
+
 	todo, exists := todos[id]
 	if !exists {
 		w.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Todo not found"})
 		return
 	}
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(todo)
 }
@@ -41,11 +43,13 @@ func GetTodo(w http.ResponseWriter, r *http.Request) {
 func CreateTodo(w http.ResponseWriter, r *http.Request) {
 	var todoCreate models.TodoCreate
 	if err := json.NewDecoder(r.Body).Decode(&todoCreate); err != nil {
+		log.Printf("CreateTodo: Error decoding request body: %v\n", err)
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid request payload"})
 		return
 	}
-	
+
+	log.Printf("CreateTodo: Received request with data: %+v\n", todoCreate)
 	now := time.Now()
 	todo := models.Todo{
 		ID:          uuid.New().String(),
@@ -55,9 +59,9 @@ func CreateTodo(w http.ResponseWriter, r *http.Request) {
 		CreatedAt:   now,
 		UpdatedAt:   now,
 	}
-	
+
 	todos[todo.ID] = todo
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(todo)
@@ -66,21 +70,21 @@ func CreateTodo(w http.ResponseWriter, r *http.Request) {
 func UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	
+
 	todo, exists := todos[id]
 	if !exists {
 		w.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Todo not found"})
 		return
 	}
-	
+
 	var todoUpdate models.TodoUpdate
 	if err := json.NewDecoder(r.Body).Decode(&todoUpdate); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid request payload"})
 		return
 	}
-	
+
 	if todoUpdate.Title != nil {
 		todo.Title = *todoUpdate.Title
 	}
@@ -90,10 +94,10 @@ func UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	if todoUpdate.Completed != nil {
 		todo.Completed = *todoUpdate.Completed
 	}
-	
+
 	todo.UpdatedAt = time.Now()
 	todos[id] = todo
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(todo)
 }
@@ -101,13 +105,13 @@ func UpdateTodo(w http.ResponseWriter, r *http.Request) {
 func DeleteTodo(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	
+
 	if _, exists := todos[id]; !exists {
 		w.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Todo not found"})
 		return
 	}
-	
+
 	delete(todos, id)
 	w.WriteHeader(http.StatusNoContent)
 }
